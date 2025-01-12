@@ -23,33 +23,33 @@ import { actualizarPeriferico, detallePeriferico, registrarPeriferico, cambiarEs
 import { actualizarUsuario, detalleUsuario, eliminarUsuario, listarUsuarios } from '../controllers/usuario_controller.js';
 
 // Rutas públicas
-router.post("/login", login);  // Iniciar sesión como admin
-router.post("/registro", registro);  // Registro de nuevo admin
-router.get("/confirmar/:token", confirmEmail);  // Confirmar cuenta de admin
-router.post("/recuperar-password", recuperarPassword);  // Recuperar contraseña
-router.get("/recuperar-password/:token", comprobarTokenPasword);  // Comprobar token para recuperación de contraseña
-router.post("/nuevo-password/:token", nuevoPassword);  // Nuevo password después de la recuperación
+router.post("/login", login);  
+router.post("/registro", registro);  
+router.get("/confirmar/:token", confirmEmail);  
+router.post("/recuperar-password", recuperarPassword);  
+router.get("/recuperar-password/:token", comprobarTokenPasword);  
+router.post("/nuevo-password/:token", nuevoPassword); 
 
 // Rutas privadas para admin (requieren autenticación)
-router.get("/perfil", verificarAutenticacion, perfil);  // Ver perfil del admin
-router.put("/admin/actualizarpassword", verificarAutenticacion, actualizarPassword);  // Actualizar contraseña del admin
-router.put("/admin/:id", verificarAutenticacion, actualizarPerfil);  // Actualizar perfil del admin
+router.get("/perfil", verificarAutenticacion, perfil);  
+router.put("/admin/actualizarpassword", verificarAutenticacion, actualizarPassword); 
+router.put("/admin/:id", verificarAutenticacion, actualizarPerfil); 
 
 // Rutas para gestión de usuarios (solo para admin)
-router.get("/usuarios", verificarAutenticacion, listarUsuarios);  // Listar todos los usuarios
-router.put("/usuario/:id", verificarAutenticacion, actualizarUsuario);  // Modificar usuario
-router.delete("/usuario/:id", verificarAutenticacion, eliminarUsuario);  // Eliminar un usuario
+router.get("/usuarios", verificarAutenticacion, listarUsuarios);  
+router.put("/usuario/:id", verificarAutenticacion, actualizarUsuario);  
+router.delete("/usuario/:id", verificarAutenticacion, eliminarUsuario);  
 router.get("/usuario/:id", verificarAutenticacion, detalleUsuario);
 
 // Rutas para gestión de periféricos (solo para admin)
-router.get("/perifericos", verificarAutenticacion, detallePeriferico);  // Listar todos los periféricos
-router.post("/periferico", verificarAutenticacion, registrarPeriferico);  // Añadir un nuevo periférico
-router.put("/periferico/:id", verificarAutenticacion, actualizarPeriferico);  // Modificar un periférico
-router.delete("/periferico/:id", verificarAutenticacion, eliminarPeriferico);  // Eliminar un periférico
+router.get("/perifericos", verificarAutenticacion, detallePeriferico);  
+router.post("/periferico", verificarAutenticacion, registrarPeriferico);  
+router.put("/periferico/:id", verificarAutenticacion, actualizarPeriferico);  
+router.delete("/periferico/:id", verificarAutenticacion, eliminarPeriferico);  
 router.put("/periferico/:id", verificarAutenticacion, cambiarEstado);
 
 // Rutas solo para admin: gestionar a otros admins
-router.get("/admins", verificarAutenticacion, listarAdmins);  // Listar todos los admins
+router.get("/admins", verificarAutenticacion, listarAdmins);  
 router.get("/admin/:id", verificarAutenticacion, detalleAdmin);  // Ver detalles de un admin en particular
 router.delete("/admin/:id", verificarAutenticacion, async (req, res) => {
     try {
