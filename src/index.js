@@ -1,8 +1,15 @@
-import app from './server.js';
+
+import app from './server.js'
+
+
+// Importar la función connection()
 import connection from './database.js';
 
-connection();
+// Haicneod uso de la función connection()
+connection()
+
 
 app.listen(app.get('port'),()=>{
-    console.log(`\nServer OK on http://localhost:${app.get('port')}\n`)
-});
+    console.log(`Server ok on http://localhost:${app.get('port')}`);
+})
+
