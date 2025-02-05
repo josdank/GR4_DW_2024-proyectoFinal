@@ -48,3 +48,5 @@ usuarioAdminSchema.methods.matchPassword = async function(password) {
 };
 
 export default model('UsuarioAdmin', usuarioAdminSchema);
+
+//Subersivo
