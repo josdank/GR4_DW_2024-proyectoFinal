@@ -13,7 +13,7 @@ router.post('/login', loginUsuario);
 
 // Rutas Protegidas
 // Ruta para ver el perfil del usuario
-router.get('/perfil', verificarAutenticacion, perfilUsuario);
+router.get('/p/:id', verificarAutenticacion, perfilUsuario);
 
 // Ruta para ver el detalle de un usuario en particular
 router.get("/:id", verificarAutenticacion, detalleUsuario);
