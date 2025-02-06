@@ -1,9 +1,6 @@
 
 import mongoose from "mongoose";
-import Perifericos from "../models/Perifericos.js"
-
-
-
+import Periferico from "../models/Perifericos.js"
 
 
 // Método para ver el detalle de los Periféricos
@@ -12,7 +9,7 @@ const detallePeriferico = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id))
         return res.status(404).json({ msg: `Lo sentimos, no existe ese periférico` });
 
-    const periferico = await Perifericos.findById(id);
+    const periferico = await Periferico.findById(id);
     if (!periferico) return res.status(404).json({ msg: "Periférico no encontrado" });
 
     res.status(200).json(periferico);

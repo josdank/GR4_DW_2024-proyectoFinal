@@ -3,45 +3,39 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors';
 
-// Importar la variable routerVeterinarios
-import routerVeterinarios from './routers/admin_routes.js'
-
-// Importar la variable routerPacientes
-import routerPacientes from './routers/usuario_routes.js'
-
-
-// Importar la variable routerPacientes
-import routerTratamientos from './routers/periferico_routes.js'
-
-
+// importación de rutas
+import admin from './routers/admin_routes.js'
+import usuario from './routers/usuario_routes.js'
+import perifericos from './routers/periferico_routes.js'
 
 
 // Inicializaciones
-const app = express()
 dotenv.config()
+const app = express()
 
 // Configuraciones 
-app.set('port',process.env.port || 3000)
+app.set('port',process.env.PORT || 3000)
 app.use(cors())
 
 // Middlewares 
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
 
-// Variables globales
-
-
+// Ruta para mostrar "Servidor en línea"
+app.get('/', (req, res) => {
+    res.send('Servidor en línea');
+});
 
 // Rutas 
-app.use('/api',routerVeterinarios)
-app.use('/api',routerPacientes)
-app.use('/api',routerTratamientos)
+app.use('/api/admin',admin)
+app.use('/api/usuario',usuario)
+app.use('/api/perifericos',perifericos)
 
 
 
 // Manejo de una ruta que no sea encontrada
-app.use((req,res)=>res.status(404).send("Endpoint no encontrado - 404"))
-
+app.use((req, res) => res.status(404).json({ error: "Endpoint no encontrado - 404" }));
 
 
 // Exportar la instancia de express por medio de app

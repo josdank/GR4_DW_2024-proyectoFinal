@@ -1,37 +1,30 @@
+import verificarAutenticacion from "../middlewares/autenticacion.js";
 import { Router } from 'express';
+import { registrarUsuario, loginUsuario, listarUsuarios, actualizarUsuario, detalleUsuario, eliminarUsuario, perfilUsuario } from "../controllers/usuario_controller.js";
+
 const router = Router();
 
-import {
-    actualizarUsuario,
-    detalleUsuario,
-    eliminarUsuario,
-    listarUsuarios,
-    registrarUsuario,
-    loginUsuario,
-    perfilUsuario
-} from "../controllers/usuario_controller.js";
-
-import verificarAutenticacion from "../middlewares/autenticacion.js";
+// Rutas públicas
+// Ruta para registrar un nuevo usuario
+router.post("/registro", registrarUsuario);
 
 // Ruta para el login del usuario
-router.post('/usuario/login', loginUsuario);
+router.post('/login', loginUsuario);
 
+// Rutas Protegidas
 // Ruta para ver el perfil del usuario
-router.get('/usuario/perfil', verificarAutenticacion, perfilUsuario);
-
-// Ruta para listar todos los usuarios
-router.get("/usuarios", verificarAutenticacion, listarUsuarios);
+router.get('/perfil', verificarAutenticacion, perfilUsuario);
 
 // Ruta para ver el detalle de un usuario en particular
-router.get("/usuario/:id", verificarAutenticacion, detalleUsuario);
-
-// Ruta para registrar un nuevo usuario
-router.post("/usuario/registro", verificarAutenticacion, registrarUsuario);
+router.get("/:id", verificarAutenticacion, detalleUsuario);
 
 // Ruta para actualizar los datos de un usuario
-router.put("/usuario/actualizar/:id", verificarAutenticacion, actualizarUsuario);
+router.put("/actualizar/:id", verificarAutenticacion, actualizarUsuario);
 
 // Ruta para eliminar un usuario
-router.delete("/usuario/eliminar/:id", verificarAutenticacion, eliminarUsuario);
+router.delete("/eliminar/:id", verificarAutenticacion, eliminarUsuario);
+
+// Rutas protegidas para administradores
+router.get("/", verificarAutenticacion, listarUsuarios);
 
 export default router;

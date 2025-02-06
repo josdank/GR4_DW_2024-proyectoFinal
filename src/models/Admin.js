@@ -1,7 +1,8 @@
 // Importar el Schema y el modelo de mongoose
 import { Schema, model } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const usuarioAdminSchema = new Schema({
+const AdminSchema = new Schema({
     nombre: {
         type: String,
         required: true,
@@ -35,18 +36,23 @@ const usuarioAdminSchema = new Schema({
 });
 
 // Método para cifrar el password del administrador
-usuarioAdminSchema.methods.encrypPassword = async function(password) {
+AdminSchema.methods.encrypPassword = async function(password) {
     const salt = await bcrypt.genSalt(10);
     const passwordEncryp = await bcrypt.hash(password, salt);
     return passwordEncryp;
 };
 
 // Método para verificar si el password ingresado es el mismo de la BDD
-usuarioAdminSchema.methods.matchPassword = async function(password) {
+AdminSchema.methods.matchPassword = async function(password) {
     const response = await bcrypt.compare(password, this.password);
     return response;
 };
 
-export default model('UsuarioAdmin', usuarioAdminSchema);
+// Método para crear un token 
+AdminSchema.methods.crearToken = function(){
+    const tokenGenerado = this.token = Math.random().toString(36).slice(2)
+    return tokenGenerado
+}
+export default model('Admin', AdminSchema);
 
 //Subersivo

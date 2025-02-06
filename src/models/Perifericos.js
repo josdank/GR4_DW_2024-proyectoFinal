@@ -60,13 +60,12 @@ perifericosSchema.methods.comparar = function (otroPeriferico) {
     // Comparar categoría
     comparaciones.categoria = this.categoria === otroPeriferico.categoria;
 
-    // Comparar especificaciones (por ejemplo, sensibilidad para ratones, tamaño para monitores, etc.)
+    // Comparar especificaciones
     comparaciones.especificaciones = {};
-    for (let [key, value] of this.especificaciones) {
+    this.especificaciones.forEach((value, key) => {
         comparaciones.especificaciones[key] = value === otroPeriferico.especificaciones.get(key);
-    }
+    });
 
-    // Comparar marcas
     comparaciones.marca = this.marca === otroPeriferico.marca;
 
     return comparaciones;

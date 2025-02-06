@@ -1,5 +1,6 @@
 // Importar Router de Express
 import { Router } from 'express';
+import Admin from '../models/Admin.js';
 
 // Crear una instancia de Router()
 const router = Router();
@@ -54,7 +55,6 @@ router.get("/admin/:id", verificarAutenticacion, detalleAdmin);  // Ver detalles
 router.delete("/admin/:id", verificarAutenticacion, async (req, res) => {
     try {
         const { id } = req.params;
-        // Lógica para eliminar al admin
         const adminBDD = await Admin.findById(id);
         if (!adminBDD) {
             return res.status(404).json({ msg: `El admin con ID ${id} no existe` });

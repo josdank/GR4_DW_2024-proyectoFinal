@@ -2,7 +2,7 @@
 // Importar JWT y el Modelo
 import jwt from 'jsonwebtoken'
 import Usuario from '../models/Usuario.js'
-
+import Admin from '../models/Admin.js'
 
 
 
@@ -16,12 +16,8 @@ if(!req.headers.authorization) return res.status(404).json({msg:"Lo sentimos, de
     const {authorization} = req.headers
 
 
-
     // Capturar errores
     try {
-
-        
-
 
         // verificar el token recuperado con el almacenado 
         const {id,rol} = jwt.verify(authorization.split(' ')[1],process.env.JWT_SECRET)
@@ -35,7 +31,7 @@ if(!req.headers.authorization) return res.status(404).json({msg:"Lo sentimos, de
         }
         else{
             console.log(id,rol);
-            req.usuarioBDD = await Paciente.findById(id).lean().select("-password")
+            req.usuarioBDD = await Admin.findById(id).lean().select("-password")
             console.log(req.usuarioBDD);
             next()
         }
