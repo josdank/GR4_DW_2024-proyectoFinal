@@ -17,21 +17,31 @@ const detallePeriferico = async (req, res) => {
 
 
 
-// Método para registrar un periferico
+// Método para registrar un periférico
 const registrarPeriferico = async (req, res) => {
-    const { nombre, categoria, precio, calidad } = req.body;
-    
+    const { nombre, categoria, precio, calidad, especificaciones, descripcion, switchs, marca } = req.body;
+
     // Validación para asegurarse de que los campos necesarios están presentes
-    if (!nombre || !categoria || !precio || !calidad)
+    if (!nombre || !categoria || !precio || !calidad || !descripcion || !switchs || !marca)
         return res.status(400).json({ msg: "Todos los campos son necesarios" });
 
-    const periferico = new Perifericos(req.body);
-    await periferico.save();
-
-    res.status(200).json({ msg: `Registro exitoso del periférico ${periferico._id}`, periferico });
+    try {
+        const periferico = new Periferico({
+            nombre,
+            categoria,
+            precio,
+            calidad,
+            especificaciones,
+            descripcion,
+            switchs,
+            marca
+        });
+        await periferico.save();
+        res.status(200).json({ msg: `Registro exitoso del periférico ${periferico._id}, periferico`});
+    } catch (error) {
+        res.status(400).json({ msg: "Error al registrar el periférico", error });
+    }
 };
-
-
 
 
 // Método para actualizar un Periférico
@@ -45,7 +55,7 @@ const actualizarPeriferico = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id))
         return res.status(404).json({ msg: `Lo sentimos, no existe el periférico ${id}` });
 
-    const perifericoActualizado = await Perifericos.findByIdAndUpdate(id, req.body, { new: true });
+    const perifericoActualizado = await Periferico.findByIdAndUpdate(id, req.body, { new: true });
     if (!perifericoActualizado)
         return res.status(404).json({ msg: "Periférico no encontrado" });
 
@@ -60,30 +70,11 @@ const eliminarPeriferico = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id))
         return res.status(404).json({ msg: `Lo sentimos, no existe el periférico ${id}` });
 
-    const perifericoEliminado = await Perifericos.findByIdAndDelete(id);
+    const perifericoEliminado = await Periferico.findByIdAndDelete(id);
     if (!perifericoEliminado)
         return res.status(404).json({ msg: "Periférico no encontrado" });
 
     res.status(200).json({ msg: "Periférico eliminado exitosamente" });
-};
-
-
-// Método para cambiar el estado de un periférico (por ejemplo, si está disponible o no)
-const cambiarEstado = async (req, res) => {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id))
-        return res.status(404).json({ msg: `Lo sentimos, no existe el periférico ${id}` });
-
-    const periferico = await Perifericos.findById(id);
-    if (!periferico)
-        return res.status(404).json({ msg: "Periférico no encontrado" });
-
-    // Suponiendo que existe un campo "estado" para cambiar su disponibilidad
-    periferico.estado = !periferico.estado;
-    await periferico.save();
-
-    res.status(200).json({ msg: "Estado del periférico modificado exitosamente", periferico });
 };
 
 
@@ -92,5 +83,4 @@ export {
     registrarPeriferico,
     actualizarPeriferico,
     eliminarPeriferico,
-    cambiarEstado,
 };

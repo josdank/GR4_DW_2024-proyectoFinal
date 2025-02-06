@@ -40,10 +40,6 @@ const perifericosSchema = new Schema({
         type: String,
         required: true
     },
-    usuario: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Usuario'
-    }
 },{
     timestamps:true
 })

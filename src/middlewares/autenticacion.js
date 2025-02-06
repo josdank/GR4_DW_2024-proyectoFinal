@@ -25,14 +25,14 @@ if(!req.headers.authorization) return res.status(404).json({msg:"Lo sentimos, de
         // Verificar el rol
         if (rol==="Usuario"){
             // Obtener el usuario 
-            req.UsuarioBDD = await Usuario.findById(id).lean().select("-password")
+            req.usuarioBDD = await Usuario.findById(id).lean().select("-password")
             // Continue el proceso
             next()
         }
         else{
             console.log(id,rol);
-            req.usuarioBDD = await Admin.findById(id).lean().select("-password")
-            console.log(req.usuarioBDD);
+            req.adminBDD = await Admin.findById(id).lean().select("-password")
+            console.log(req.adminBDD);
             next()
         }
 

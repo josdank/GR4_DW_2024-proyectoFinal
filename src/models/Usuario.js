@@ -45,11 +45,6 @@ const usuarioSchema = new Schema({
         ref: 'Perifericos'
     }],
     // Este campo puede ser útil si el usuario tiene roles específicos
-    rol: {
-        type: String,
-        enum: ['admin', 'usuario'], // Roles como ejemplo
-        default: 'usuario'
-    }
 }, {
     timestamps: true
 });

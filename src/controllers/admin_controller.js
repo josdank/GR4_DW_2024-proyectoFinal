@@ -37,15 +37,22 @@ const login = async(req,res)=>{
 }
 
 // Método para mostrar el perfil 
-const perfil =(req,res)=>{
-    delete req.adminBDD.token
-    delete req.adminBDD.confirmEmail
-    delete req.adminBDD.createdAt
-    delete req.adminBDD.updatedAt
-    delete req.adminBDD.__v
-    req.adminBDD.rol = "admin"
-    res.status(200).json(req.adminBDD)
-}
+const perfil = (req, res) => {
+    if (!req.adminBDD) {
+        return res.status(404).json({ msg: "Admin no encontrado" });
+    }
+
+    const admin = { ...req.adminBDD };
+
+    delete admin.token;
+    delete admin.confirmEmail;
+    delete admin.createdAt;
+    delete admin.updatedAt;
+    delete admin.__v;
+    admin.rol = "admin";
+
+    res.status(200).json(admin);
+};
 
 // Método para el registro
 const registro = async (req,res)=>{
@@ -98,8 +105,9 @@ const listarAdmins = (req,res)=>{
 // Método para mostrar el detalle de un admin en particular
 const detalleAdmin = async(req,res)=>{
     const {id} = req.params
-    const adminBDD = await Admin.findById(id)
-    res.status(200).json(adminBDD)
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe este administrador ${id}`});
+    const admin = await Admin.findById(id).select("-createdAt -updatedAt -__v")
+    res.status(200).json(admin)
 }
 
 // Método para actualizar el perfil
@@ -127,16 +135,30 @@ const actualizarPerfil = async (req,res)=>{
     res.status(200).json({msg:"Perfil actualizado correctamente"})
 }
 
-// Método para actualizar el password
-const actualizarPassword = async (req,res)=>{
-    const adminBDD = await Admin.findById(req.adminBDD._id)
-    if(!adminBDD) return res.status(404).json({msg:`Lo sentimos, no existe el admin ${id}`})
-    const verificarPassword = await adminBDD.matchPassword(req.body.passwordactual)
-    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password actual no es el correcto"})
-    adminBDD.password = await adminBDD.encrypPassword(req.body.passwordnuevo)
-    await adminBDD.save()
-    res.status(200).json({msg:"Password actualizado correctamente"})
-}
+// Método para eliminar un admin
+const eliminarAdmin = async (req, res) => {
+    const { id } = req.params;
+
+    // Validar que el ID es válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ msg: "Lo sentimos, debe ser un id válido" });
+    }
+
+    try {
+        // Buscar y eliminar el admin
+        const admin = await Admin.findByIdAndDelete(id);
+
+        // Verificar si el admin existía
+        if (!admin) {
+            return res.status(404).json({ msg: `Lo sentimos, no existe el admin con id ${id}` });
+        }
+
+        res.status(200).json({ msg: "Admin eliminado correctamente" });
+    } catch (error) {
+        res.status(500).json({ msg: "Error al eliminar el admin", error });
+    }
+};
+
 
 // Método para recuperar el password
 const recuperarPassword = async(req,res)=>{
@@ -174,6 +196,7 @@ const nuevoPassword = async (req,res)=>{
 }
 
 
+
 // Exportar cada uno de los métodos
 export {
     login,
@@ -183,7 +206,7 @@ export {
     listarAdmins,
     detalleAdmin,
     actualizarPerfil,
-    actualizarPassword,
+    eliminarAdmin,
     recuperarPassword,
     comprobarTokenPasword,
     nuevoPassword

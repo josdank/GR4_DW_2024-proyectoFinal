@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 // Rutas 
 app.use('/api/admin',admin)
 app.use('/api/usuario',usuario)
-app.use('/api/perifericos',perifericos)
+app.use('/api/periferico',perifericos)
 
 
 

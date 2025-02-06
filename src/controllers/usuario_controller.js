@@ -10,27 +10,20 @@ import generarJWT from "../helpers/crearJWT.js"
 // Método para el proceso de login
 const loginUsuario = async(req,res)=>{
     const {email, password} = req.body
-
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
-
     const usuarioBDD = await Usuario.findOne({email})
-
     if(!usuarioBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
-
     const verificarPassword = await usuarioBDD.matchPassword(password)
-
     if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
-
     const token = generarJWT(usuarioBDD._id, "usuario")
-
 	const {nombre, apellido, email: emailP, celular, _id} = usuarioBDD
-
     res.status(200).json({
         token,
         nombre,
         apellido,
         emailP,
         celular,
+        rol: "usuario",
         _id
     })
 }
@@ -59,37 +52,36 @@ const detalleUsuario = async(req,res)=>{
 }
 
 // Método para registrar un usuario
-const registrarUsuario = async(req,res)=>{
-
-    const {email} = req.body
+const registrarUsuario = async(req, res) => {
+    const { email, password } = req.body;
 
     // Validar todos los campos
-    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
-    
+    if (Object.values(req.body).includes("")) return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+
     // Obtener el usuario en base al email
-    const verificarEmailBDD = await Usuario.findOne({email})
+    const verificarEmailBDD = await Usuario.findOne({ email });
 
     // Verificar si el usuario ya se encuentra registrado
-    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+    if (verificarEmailBDD) return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
 
     // Crear una instancia del Usuario
-    const nuevoUsuario = new Usuario(req.body)
-
-    // Crear un password
-    const password = Math.random().toString(36).slice(2)
+    const nuevoUsuario = new Usuario(req.body);
 
     // Encriptar el password
-    nuevoUsuario.password = await nuevoUsuario.encrypPassword("user"+password)
+    nuevoUsuario.password = await nuevoUsuario.encrypPassword(password);
+
+    // Crear el token 
+    const token = generarJWT(nuevoUsuario._id, "usuario");
 
     // Enviar el correo electrónico
-    await sendMailToUsuario(email, "user"+password)
+    await sendMailToUsuario(email, token);
 
     // Guardar en la base de datos
-    await nuevoUsuario.save()
+    await nuevoUsuario.save();
 
     // Presentar resultados
-    res.status(200).json({msg:"Registro exitoso del usuario y correo enviado"})
-}
+    res.status(200).json({ msg: "Revisa tu correo electrónico para confirmar tu cuenta" });
+};
 
 // Método para actualizar un usuario
 const actualizarUsuario = async(req,res)=>{
@@ -99,7 +91,7 @@ const actualizarUsuario = async(req,res)=>{
 
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el usuario ${id}`});
 
-    await Usuario.findByIdAndUpdate(req.params.id, req.body)
+    const usuario = await Usuario.findById(id).select("-createdAt -updatedAt -__v")
 
     res.status(200).json({msg:"Actualización exitosa del usuario"})
 }
