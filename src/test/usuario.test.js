@@ -73,5 +73,5 @@ describe('Usuario Model Test', () => {
 
     const isNotMatch = await usuario.matchPassword('wrongpassword');
     expect(isNotMatch).toBe(false);
-  }, 30000); // Aumenta el timeout a 30 segundos
+  }, 30000); 
 });
